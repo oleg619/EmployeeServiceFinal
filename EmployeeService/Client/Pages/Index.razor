@@ -1,0 +1,84 @@
+﻿@page "/"
+@using EmployeeService.Client.Services
+@inject IEmployeeProvider Provider
+
+<div class="input-group mb-auto">
+    <div class="input-group-prepend">
+        <select class="custom-select input-group-select" @bind="filterValue">
+            <option value="1">First name</option>
+            <option value="2">Last name</option>
+        </select>
+    </div>
+    <input type="search" class="form-control" @bind="_filterText" placeholder="Filter">
+    <button class="btn btn-primary btn-search" type="button" @onclick="FilterClick" disabled="@(_downloading)">
+        <i class="fa fa-search" aria-hidden="true"></i>
+    </button>
+</div>
+
+<hr>
+
+@if (_employees != null)
+{
+    <Modal @ref="_modal"></Modal>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col" style="width: 10%">First name</th>
+                <th scope="col" style="width: 15%">Last name</th>
+                <th scope="col" style="width: 25%">User name</th>
+                <th scope="col" style="width: 25%">Office number</th>
+                <th scope="col" style="width: 25%">Mobile number</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            @foreach (var employee in _employees)
+            {
+                <tr @onclick="() => { _modal.Open(employee); }">
+                    <td>@employee.FirstName</td>
+                    <td>@employee.LastName</td>
+                    <td>@employee.Mail</td>
+                    <td>@employee.OfficePhone</td>
+                    <td>@employee.MobilePhone</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+
+    </div>
+}
+@if (_downloading)
+{
+    <div class="text-center">
+        <div class="spinner-grow" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+}
+
+
+@code{
+    private bool _downloading;
+    private List<Employee> _employees;
+    private Modal _modal;
+
+    private int filterValue = (int) Filter.FirstName;
+    private string _filterText = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _downloading = true;
+        _employees = await Provider.GetAll();
+        _downloading = false;
+    }
+
+    private async Task FilterClick()
+    {
+        _downloading = true;
+        _employees = null;
+        _employees = await Provider.Filter(_filterText, (Filter) filterValue);
+        _downloading = false;
+    }
+
+}
