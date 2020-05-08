@@ -25,9 +25,9 @@
 * Install [.Net Core 3.1.](https://dotnet.microsoft.com/download)
 * Clone the repository and navigate into the new directory using a terminal
  ```
-cd EmployeeService/Client
- dotnet restore
- dotnet run
+> cd src/Client
+> dotnet restore
+> dotnet run
 ```
 
 ## Azure Setup
@@ -46,14 +46,14 @@ and follow along below video to create a Storage Container > Static Website > $w
 * Publish files to folder
 
 ```
-dotnet publish -c Release -o publish
+> dotnet publish -c Release -o publish
 ```
 Key auth (key can get on azure portal => storage account => access keys)
 ```
-az storage blob upload-batch -d '$web' --account-name <accountName> -s ./publish/wwwroot --account-key <key> --auth-mode key
+> az storage blob upload-batch -d '$web' --account-name <accountName> -s ./publish/wwwroot --account-key <key> --auth-mode key
 ```
 Or 
 ```
-az login
-az storage blob upload-batch -d '$web' --account-name <accountName> -s ./publish/wwwroot
+> az login
+> az storage blob upload-batch -d '$web' --account-name <accountName> -s ./publish/wwwroot
 ```
